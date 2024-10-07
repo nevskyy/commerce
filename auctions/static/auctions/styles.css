@@ -1,0 +1,81 @@
+body {
+    padding: 10px;
+}
+
+.listing {
+    display: flex;
+    gap: 20px;
+}
+
+.img-container{
+    position: relative;
+    display: inline-block; 
+}
+
+.listing-btn  {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.btn-watch {
+    background-color: #28a745;
+}
+.btn-stop-watch {
+    background-color: #dc3545;
+}
+
+/* .btn-watch, .btn-stop-watch:focus,
+.btn-watch, .btn-stop-watch:active,
+.btn-watch, .btn-stop-watch:visited {
+    outline: none;
+    border: none;
+} */
+
+
+
+.btn-watch:focus {
+    border: none;
+    outline: none;
+}
+.btn-watch:visited {
+    border: none;
+    outline: none;
+}
+.btn-watch:hover {
+    background-color: #1f8437;
+}
+.btn-watch:active {
+    border: none;
+    outline: none;
+}
+
+.btn-stop-watch:focus {
+    border: none;
+    outline: none;
+}
+.btn-stop-watch:visited {
+    border: none;
+    outline: none;
+}
+.btn-stop-watch:hover {
+    background-color: #a92a36;
+}
+.btn-stop-watch:active {
+    border: none;
+    outline: none;
+}
+
+
+
