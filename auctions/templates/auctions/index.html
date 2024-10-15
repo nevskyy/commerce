@@ -1,33 +1,64 @@
-{% extends "auctions/layout.html" %}
-
+{% extends "auctions/layout.html" %} 
 {% block body %}
-    <form action="{% url 'auctions:listings_by_category' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-        <select class="custom-select" name="category" id="category" onchange="this.form.submit()">
-            <option value="" selected disabled>Choose Category</option>
-            {% for category in categories %}
-                <option value="{{category}}">{{category}}</option>
-            {% endfor %}
-        </select>
+<form
+  action="{% url 'auctions:listings_by_category' %}"
+  method="post"
+>
+  {% csrf_token %}
+  <div class="form-group">
+    <select
+      class="custom-select"
+      name="category"
+      id="category"
+      onchange="this.form.submit()"
+    >
+      <option
+        value=""
+        selected
+        disabled
+      >
+        Choose Category
+      </option>
+      {% for category in categories %}
+      <option value="{{category}}">
+        {{category}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
+
+<h2 class="nav-title">Active Listings</h2>
+
+<div
+  class="cards-container"
+>
+  {% for listing in listings %} 
+    {% if listing.is_active%}
+        <div
+            class="card"
+        >
+            <img
+                class="card-img"
+                src="{{listing.image_url}}"
+                alt="{{listing.title}}"
+                height="400px"
+            />
+            <div class="card-body">
+                <h4 class="card-title">
+                    <a
+                        href="{% url 'auctions:select_listing' listing.id %}"
+            
+                    >
+                        {{ listing.title }}
+                    </a>
+                </h4>
+                <h5 class="card-bid">
+                    $ {{ listing.initial_bid }}
+                </h5>
+            </div>
         </div>
-    </form>
-
-    <h2>Active Listings</h2>
-
-    <div class="row mx-3">
-        {% for listing in listings %}
-            {% if listing.is_active%}
-                <div class="card" style="width: 18rem;">
-                    <img class="card-img-top" src="{{listing.image_url}}" alt="{{listing.title}}" height="500px">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ listing.title }}</h4>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ listing.description|slice:":100" }}...</h6>
-                        <h5 class="card-text">$ {{ listing.initial_bid }}</h5>
-                        <a href="{% url 'auctions:select_listing' listing.id %}" class="btn btn-primary">Learn more</a>
-                    </div>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </div>
+    {% endif %} 
+  {% endfor %}
+</div>
 {% endblock %}

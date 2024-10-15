@@ -22,10 +22,10 @@
 {% endif %}
 <!-- <h2>{{message}}</h2> -->
 
+{% if user.is_authenticated %} 
 <div class="listing">
   <div class="img-container">
-    {% if user.is_authenticated %} 
-        {% if isListingInWatchlist %}
+        <!-- {% if isListingInWatchlist %}
         <form
             action="{% url 'auctions:remove_listing' listing.id %}"
             method="POST"
@@ -41,8 +41,8 @@
           
         </button>
         </form>
-        {% else %}
-        <form
+        {% else %} -->
+        <!-- <form
             action="{% url 'auctions:add_listing' listing.id %}"
             method="POST"
         >
@@ -57,9 +57,8 @@
                 </svg>
             </span>
         </button>
-        </form>
-        {% endif %} 
-    {% endif %}
+        </form> -->
+        <!-- {% endif %}  -->
     <img
       class="listing-img"
       src="{{listing.image_url}}"
@@ -105,10 +104,7 @@
         <span>{{num_of_bids}}</span>
       </h4>
     </div>
-    <!-- <h4 class="listing-text">
-      $ {{ listing.initial_bid }}
-    </h4> -->
-    {% if user.is_authenticated and not is_listing_owner %}
+    <!-- {% if user.is_authenticated and not is_listing_owner %}
     <form
       action="{% url 'auctions:add_bid' listing.id %}"
       method="POST"
@@ -129,11 +125,11 @@
         Bid
       </button>
     </form>
-    {% endif %}
+    {% endif %} -->
   </div>
 </div>
 
-{% if is_listing_owner and listing.is_active %}
+<!-- {% if is_listing_owner and listing.is_active %}
 <div class="listing-options">
     <div>
       <form
@@ -163,9 +159,9 @@
       </form>
     </div>
 </div>
-{% endif %}
+{% endif %} -->
 
-<div class="comment-section">
+<!-- <div class="comment-section">
     <h2 class="comment-title">Comments</h2>
     
     {% if user.is_authenticated %}
@@ -193,7 +189,8 @@
     {% else %}
     <p class="no-comments">No comments yet. Be the first to comment!</p>
     {% endif %}
-  </div>
-  
+  </div> -->
+{% endif %}
+ 
 
 {% endblock %}
