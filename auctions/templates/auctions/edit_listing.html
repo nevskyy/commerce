@@ -12,7 +12,6 @@
   method="post">
   {% csrf_token %}
   <div class="form-group">
-    <!-- <label for="title">Title:</label> -->
     <h4>Title:</h4>
     <input
       id="title"
@@ -39,7 +38,7 @@
       value="{{ listing.image_url }}" />
   </div>
   <div class="form-group">
-    <select name="category" class="custom-select">
+    <select name="category" class="custom-select edit-category">
       {% for category in categories %}
           <option value="{{ category.id }}" {% if category.id == listing.category.id %}selected{% endif %}>
               {{ category.category }}

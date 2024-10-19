@@ -27,10 +27,11 @@ class Listing(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,  blank=True, null=True, related_name="listings")
     watch_list = models.ManyToManyField(User, blank=True, null=True, related_name="watchlist" )
     creating_date = models.DateTimeField(auto_now_add=True)
+    closing_date = models.DateTimeField(null=True, blank=True)
     bids = models.ManyToManyField(Bid, blank=True, related_name="listings")
 
     def __str__(self):
-        return f"{self.title}"
+        return f"{self.title} {self.is_active} {self.creating_date} {self.closing_date}"
     
 class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE,  blank=True, null=True, related_name="userComment")

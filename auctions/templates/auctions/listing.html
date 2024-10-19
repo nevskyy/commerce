@@ -1,64 +1,70 @@
 {% extends "auctions/layout.html" %} 
 {% block body %} 
-{% load tz %} 
-{% if updated and message %}
-<div
-  class="alert success"
->
-  {{ message }}
-</div>
-{% elif not updated and message %}
-<div
-  class="alert"
->
-  {{ message }}
-</div>
-{% elif not listing.is_active and user == listing.initial_bid.user %}
-<div
-  class="alert success"
->
-  Congratulations You win the auction !
-</div>
-{% endif %}
-<!-- <h2>{{message}}</h2> -->
+{% load tz %}
 
 <div class="listing">
   <div class="img-container">
     {% if user.is_authenticated %} 
-        {% if isListingInWatchlist %}
-        <form
-            action="{% url 'auctions:remove_listing' listing.id %}"
-            method="POST"
+    {% if isListingInWatchlist %}
+    <form
+      action="{% url 'auctions:remove_listing' listing.id %}"
+      method="POST"
+    >
+      {% csrf_token %}
+      <button
+        type="submit"
+        class="listing-btn btn-stop-watch"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30px"
+          height="30px"
+          fill="red"
+          viewBox="0 0 24 24"
+          stroke-width="1"
+          stroke="none"
+          class="size-6"
         >
-        {% csrf_token %}
-        <button
-            type="submit"
-            class="listing-btn btn-stop-watch"
-        >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="red" width="50px" height="50px" stroke="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+          />
         </svg>
-          
-        </button>
-        </form>
-        {% else %}
-        <form
-            action="{% url 'auctions:add_listing' listing.id %}"
-            method="POST"
-        >
-        {% csrf_token %}
-        <button
-            type="submit"
-            class="listing-btn btn-watch"
-        >
-            <span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="green" width="50px" height="50px" stroke="none", viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                </svg>
-            </span>
-        </button>
-        </form>
-        {% endif %} 
+      </button>
+    </form>
+    {% else %}
+    <form
+      action="{% url 'auctions:add_listing' listing.id %}"
+      method="POST"
+    >
+      {% csrf_token %}
+      <button
+        type="submit"
+        class="listing-btn btn-watch"
+      >
+        <span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            width="30px"
+            height="30px"
+            stroke="white"
+            ,
+            viewBox="0 0 24 24"
+            stroke-width="1"
+            class="size-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+            />
+          </svg>
+        </span>
+      </button>
+    </form>
+    {% endif %} 
     {% endif %}
     <img
       class="listing-img"
@@ -69,19 +75,37 @@
 
   <div class="listing-info">
     <div>
-        <h2 class="listing-title">
-          {{ listing.title }}
-        </h2>
-        <h3 class="listing-description">
-          {{ listing.description }}
-        </h3>
+      <h2 class="listing-title">
+        {{ listing.title }}
+      </h2>
+      <h3 class="listing-description">
+        {{ listing.description }}
+      </h3>
     </div>
+
+    {% if listing.is_active and updated %}
+    <div class="alert success">{{ message }}</div>
+    {% endif %} 
+    {% if listing.is_active and not updated %}
+    <div class="alert">{{ message }}</div>
+    {% endif %} 
+    {%if not listing.is_active %} 
+    {%if user == listing.listing_owner%}
+    <div class="alert success">
+      You have successfully closed the Auction!
+    </div>
+    {% else %}
+    <div class="alert success">
+      Congratulations you have won this Auction!
+    </div>
+    {% endif %} 
+    {% endif %}
 
     <div class="bid-info">
       <h4 class="listing-owner">
         Created by:
         <span>
-          {{listing.listing_owner | capfirst}} on {{local_creating_date|date:"F j, Y, g:i a"}}
+          {{listing.listing_owner | capfirst}} on {{local_creating_date|date:"F j, Y,g:ia"}}
         </span>
       </h4>
       <h4 class="listing-initial-bid">
@@ -105,10 +129,7 @@
         <span>{{num_of_bids}}</span>
       </h4>
     </div>
-    <!-- <h4 class="listing-text">
-      $ {{ listing.initial_bid }}
-    </h4> -->
-    {% if user.is_authenticated and not is_listing_owner %}
+    {% if user.is_authenticated and not is_listing_owner and listing.is_active%}
     <form
       action="{% url 'auctions:add_bid' listing.id %}"
       method="POST"
@@ -135,65 +156,84 @@
 
 {% if is_listing_owner and listing.is_active %}
 <div class="listing-options">
-    <div>
-      <form
-        action="{% url 'auctions:close_listing' listing.id %}"
-        method="POST"
-      >
-        {% csrf_token %}
-        <button
-          type="submit"
-          class="btn"
-        >
-          Close Auction
-        </button>
-      </form>
-    </div>
-    <div>
-      <form
-        action="{% url 'auctions:edit_listing' listing.id %}"
-      >
-        {% csrf_token %}
-        <button
-          type="submit"
-          class="btn"
-        >
-          Edit
-        </button>
-      </form>
-    </div>
-</div>
-{% endif %}
-
-<div class="comment-section">
-    <h2 class="comment-title">Comments</h2>
-    
-    {% if user.is_authenticated %}
-    <form action="{% url 'auctions:add_comment' listing.id %}" method="POST" class="comment-form">
+  <div>
+    <form
+      action="{% url 'auctions:close_listing' listing.id %}"
+      method="POST"
+    >
       {% csrf_token %}
-      <div class="input-group">
-        <input type="text" name="new_comment" class="form-control" placeholder="Add your comment...">
-        <div class="input-group-append">
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-      </div>
+      <button
+        type="submit"
+        class="btn"
+      >
+        Close Auction
+      </button>
     </form>
-    {% endif %}
-    
-    {% if comments %}
-    <ul class="comment-list">
-      {% for comment in comments %}
-      <li class="comment-item">
-        <p class="comment-author">{{ comment.author }}</p>
-        <p class="comment-content">{{ comment.comment }}</p>
-        <small class="comment-date">{{ comment.date_posted|date:"F j, Y, g:i a" }}</small>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="no-comments">No comments yet. Be the first to comment!</p>
-    {% endif %}
   </div>
-  
-
+  <div>
+    <form
+      action="{% url 'auctions:edit_listing' listing.id %}"
+    >
+      {% csrf_token %}
+      <button
+        type="submit"
+        class="btn"
+      >
+        Edit
+      </button>
+    </form>
+  </div>
+</div>
+{% endif %} 
+{% if listing.is_active %}
+<div class="comment-section">
+  <h2 class="comment-title">Comments</h2>
+  {% if user.is_authenticated %}
+  <form
+    action="{% url 'auctions:add_comment' listing.id %}"
+    method="POST"
+    class="comment-form"
+  >
+    {% csrf_token %}
+    <div class="input-group">
+      <input
+        type="text"
+        name="new_comment"
+        class="form-control comment"
+        placeholder="Add your comment..."
+      />
+      <div class="input-group-append">
+        <button
+          type="submit"
+          class="btn btn-primary"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </form>
+  {% endif %} 
+  {% if comments %}
+  <ul class="comment-list">
+    {% for comment in comments %}
+    <li class="comment-item">
+      <p class="comment-author">
+        {{ comment.author }}
+      </p>
+      <p class="comment-content">
+        {{ comment.comment }}
+      </p>
+      <small class="comment-date">
+        {{ comment.date_posted|date:"F j, Y, g:ia" }}
+      </small>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="no-comments">
+    No comments yet. Be the first to comment!
+  </p>
+  {% endif %}
+</div>
+{% endif %} 
 {% endblock %}

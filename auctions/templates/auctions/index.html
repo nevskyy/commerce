@@ -30,35 +30,30 @@
 
 <h2 class="nav-title">Active Listings</h2>
 
-<div
-  class="cards-container"
->
+<div class="cards-container">
   {% for listing in listings %} 
-    {% if listing.is_active%}
-        <div
-            class="card"
+  {% if listing.is_active %}
+  <div class="card">
+    <img
+      class="card-img"
+      src="{{listing.image_url}}"
+      alt="{{listing.title}}"
+      height="400px"
+    />
+    <div class="card-body">
+      <h4 class="card-title">
+        <a
+          href="{% url 'auctions:select_listing' listing.id %}"
         >
-            <img
-                class="card-img"
-                src="{{listing.image_url}}"
-                alt="{{listing.title}}"
-                height="400px"
-            />
-            <div class="card-body">
-                <h4 class="card-title">
-                    <a
-                        href="{% url 'auctions:select_listing' listing.id %}"
-            
-                    >
-                        {{ listing.title }}
-                    </a>
-                </h4>
-                <h5 class="card-bid">
-                    $ {{ listing.initial_bid }}
-                </h5>
-            </div>
-        </div>
-    {% endif %} 
+          {{ listing.title }}
+        </a>
+      </h4>
+      <h5 class="card-bid">
+        $ {{ listing.initial_bid }}
+      </h5>
+    </div>
+  </div>
+  {% endif %} 
   {% endfor %}
 </div>
 {% endblock %}

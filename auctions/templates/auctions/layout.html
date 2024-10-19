@@ -3,10 +3,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
     <title>
-      {% block title %} Auctions {% endblock %}
+    {% block title %} 
+        Auctions 
+    {% endblock %}
     </title>
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <link
       href="{% static 'auctions/styles.css' %}"
       rel="stylesheet"
@@ -26,95 +31,206 @@
     />
   </head>
 
-  <body>
+  <body id="home">
     <header class="header">
-      <div class="nav-items">
-        <h4>CS50W Auction</h4>
-        <ul class="nav">
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/' %}active{% endif %}"
-              href="{% url 'auctions:index' %}" class="nav-link {% if request.path == '' %}active{% endif %}"
-            >
-              Active Listings
+      <div class="container">
+        <div class="header-content">
+          <h4 class="logo">CS50W Auction</h4>
+          <ul class="nav">
+            <li class="nav-item">
+              <a
+                href="{% url 'auctions:index' %}"
+                class="nav-link {% if request.path == '' %}active{% endif %}"
+              >
+                Active Listings
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/listings_by_category' %}active{% endif %}"
+                href="{% url 'auctions:listings_by_category' %}"
+              >
+                Categories
+              </a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/create_listing' %}active{% endif %}"
+                href="{% url 'auctions:create_listing' %}"
+              >
+                Create Listing
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/watch_list' %}active{% endif %}"
+                href="{% url 'auctions:watch_list' %}"
+              >
+                Watch List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/closed_listings' %}active{% endif %}"
+                href="{% url 'auctions:closed_listings' %}"
+              >
+                Closed Listings
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/logout' %}active{% endif %}"
+                href="{% url 'auctions:logout' %}"
+              >
+                Log Out
+              </a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/login' %}active{% endif %}"
+                href="{% url 'auctions:login' %}"
+              >
+                Log In
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link {% if request.path == '/register' %}active{% endif %}"
+                href="{% url 'auctions:register' %}"
+              >
+                Register
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+          <div class="user-status">
+            {% if user.is_authenticated %} 
+                Signed in as
+            <strong>
+              {{ user.username | capfirst }}
+            </strong>
+            {% else %} 
+                You are not signed in. 
+            {% endif %}
+          </div>
+          <div class="burger-menu">
+            <a href="#burger-container">
+              <img
+                src="{% static 'auctions/stack.png' %}"
+                alt="burger-menu"
+                class="menu-icon"
+              />
             </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/listings_by_category' %}active{% endif %}"
-              href="{% url 'auctions:listings_by_category' %}"
-            >
-              Categories
-            </a>
-          </li>
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/create_listing' %}active{% endif %}"
-              href="{% url 'auctions:create_listing' %}"
-            >
-              Create Listing
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/watch_list' %}active{% endif %}"
-              href="{% url 'auctions:watch_list' %}"
-            >
-              Watch List
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/watch_list' %}active{% endif %}"
-              href="{% url 'auctions:watch_list' %}"
-            >
-              Watch List
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/logout' %}active{% endif %}"
-              href="{% url 'auctions:logout' %}"
-            >
-              Log Out
-            </a>
-          </li>
-          {% else %}
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/login' %}active{% endif %}"
-              href="{% url 'auctions:login' %}" 
-            >
-              Log In
-            </a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link {% if request.path == '/register' %}active{% endif %}"
-              href="{% url 'auctions:register' %}"
-            >
-              Register
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-      <div class="user-status">
-        {% if user.is_authenticated %} 
-            Signed in as
-        <strong>{{ user.username | capfirst }}</strong>
-        {% else %} 
-            You are not signed in. 
-        {% endif %}
+          </div>
+
+          <div
+            class="burger-container"
+            id="burger-container"
+          >
+            <div class="burger-content">
+              <div class="burger-header">
+                <ul class="nav-burger">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/' %}active{% endif %}"
+                      href="{% url 'auctions:index' %}"
+                      class="nav-link {% if request.path == '' %}active{% endif %}"
+                    >
+                      Active Listings
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/listings_by_category' %}active{% endif %}"
+                      href="{% url 'auctions:listings_by_category' %}"
+                    >
+                      Categories
+                    </a>
+                  </li>
+                  {% if user.is_authenticated %}
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/create_listing' %}active{% endif %}"
+                      href="{% url 'auctions:create_listing' %}"
+                    >
+                      Create Listing
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/watch_list' %}active{% endif %}"
+                      href="{% url 'auctions:watch_list' %}"
+                    >
+                      Watch List
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/closed_listings' %}active{% endif %}"
+                      href="{% url 'auctions:closed_listings' %}"
+                    >
+                      Closed Listings
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/logout' %}active{% endif %}"
+                      href="{% url 'auctions:logout' %}"
+                    >
+                      Log Out
+                    </a>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/login' %}active{% endif %}"
+                      href="{% url 'auctions:login' %}"
+                    >
+                      Log In
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link {% if request.path == '/register' %}active{% endif %}"
+                      href="{% url 'auctions:register' %}"
+                    >
+                      Register
+                    </a>
+                  </li>
+                  {% endif %}
+                </ul>
+                <div class="close-menu">
+                  <a href="#home">
+                    <img
+                      src="{% static 'auctions/close.png' %}"
+                      alt="burger-menu"
+                      class="close-icon"
+                    />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
-    <hr />
-    <div class="content">
-        {% block body %} {% endblock %}
-    </div>
+    <main>
+      <div class="container">
+        <div class="content">
+          {% block body %} 
+          {% endblock %}
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <p>
+          © CS50W Commerce Implemented by
+          O.Lisnevskyi 2024
+        </p>
+      </div>
+    </footer>
   </body>
-  <footer class="footer">
-    <p>© CS50W Commerce Implemented by O.Lisnevskyi 2024</p>
-  </footer>
 </html>

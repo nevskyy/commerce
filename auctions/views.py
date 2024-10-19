@@ -8,13 +8,11 @@ from django.utils import timezone
 
 from .models import User, Listing, Category, Comment, Bid
 
-
 def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.all(),
         "categories": Category.objects.all(),
     })
-
 
 def login_view(request):
     if request.method == "POST":
@@ -108,7 +106,6 @@ def select_listing(request, listing_id):
     comments = Comment.objects.filter(listing=listing_data)
     is_listing_owner = current_user.username == listing_data.listing_owner.username
     local_creating_date = timezone.localtime(listing_data.creating_date)
-
     all_bids = listing_data.bids.all()
     first_bid = all_bids.first().bid if all_bids.first() else None
     last_bid = all_bids.last().bid if all_bids.last() else None
@@ -164,8 +161,6 @@ def show_watch_list(request):
     current_user = request.user
     user_watch_list = current_user.watchlist.all()
 
-    print(user_watch_list)
-
     return render(request, "auctions/watch_list.html", {
         "userWatchList": user_watch_list
     })
@@ -198,16 +193,9 @@ def add_bid(request, listing_id):
         highest_bidder = all_bids.last().user if all_bids.last() else None
         num_of_bids = listing_data.bids.count()
 
-
-
-        # if new_bid > listing_data.initial_bid.bid:
         if not all_bids or new_bid > first_bid:
             updated_bid = Bid(bid=new_bid, user=request.user)
             updated_bid.save()
-
-            # listing_data.initial_bid = updated_bid
-            # listing_data.save()
-
             listing_data.bids.add(updated_bid)
             listing_data.save()
 
@@ -215,11 +203,6 @@ def add_bid(request, listing_id):
             last_bid = listing_data.bids.last().bid if listing_data.bids.last() else None
             highest_bidder = all_bids.last().user if all_bids.last() else None
             num_of_bids = listing_data.bids.count()
-
-
-            # first_bid = all_bids.first().bid
-            # last_bid = all_bids.last().bid 
-            # print(last_bid)
             
             return render(request, "auctions/listing.html", {
                 "listing": listing_data,
@@ -247,11 +230,10 @@ def add_bid(request, listing_id):
                 "num_of_bids": num_of_bids
             })
 
-    # return HttpResponseRedirect(reverse('auctions:select_listing', args=[listing_id]))
-
 def close_listing(request, listing_id):
     listing_data = Listing.objects.get(pk=listing_id)
     listing_data.is_active = False
+    listing_data.closing_date = timezone.now()
     listing_data.save()
     is_listing_in_watchlist = request.user in listing_data.watch_list.all()
     comments = Comment.objects.filter(listing=listing_data)
@@ -259,11 +241,38 @@ def close_listing(request, listing_id):
 
     return render(request, "auctions/listing.html", {
         "listing": listing_data,
-        "message": "Congratulations, your listing has been bought!",
+        "message": "You have successfully closed the auction!",
         "updated": True,
         "isListingInWatchlist": is_listing_in_watchlist,
         "comments": comments,
         "is_listing_owner": is_listing_owner
+    })
+
+def closed_listings(request):
+    closed_listings = Listing.objects.filter(is_active=False)
+    closed_listings_with_bids = []
+
+    for listing in closed_listings:
+        won_bid = listing.bids.order_by('bid').last()
+        highest_bidder = won_bid.user if won_bid else None
+        num_of_bids = listing.bids.count()
+        creating_date = timezone.localtime(listing.creating_date)
+        closing_date = timezone.localtime(listing.closing_date)
+
+        closed_listings_with_bids.append({
+            "listing": listing,
+            "won_bid": won_bid,
+            "highest_bidder": highest_bidder,
+            "num_of_bids": num_of_bids,
+            "creating_date": creating_date,
+            "closing_date": closing_date,
+        })
+
+    closed_listings_with_bids = sorted(closed_listings_with_bids, key=lambda x: x['closing_date'], reverse=True)
+
+
+    return render(request, "auctions/closed_listings.html", {
+        "closed_listings_with_bids": closed_listings_with_bids,
     })
 
 def edit_listing(request, listing_id):
